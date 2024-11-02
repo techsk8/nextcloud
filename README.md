@@ -10,7 +10,7 @@ Edit the `docker-compose.yml` file and set your desired values for paths, passwo
 docker compose up -d
 ```
 
-Finish setting up the instance by either proxying the container's 443 through nginx/NPM or whatever you use as reverse proxy, or go to <ipaddr>:8080.
+Finish setting up the instance by either proxying the container's 443 through nginx/NPM or whatever you use as reverse proxy, or go to yourIP:8080.
 
 ## Config file
 
