@@ -1,0 +1,59 @@
+---
+
+volumes:
+  mariadb_data: {}
+  redis_data: {}
+
+services:
+
+  ##
+  ## - nextcloud
+  ##
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    pull_policy: always
+    container_name: nextcloud
+    env_file:
+      - .env
+    volumes:
+      - ./nextcloud:/config
+      - /path/to/nextcloud-data:/data
+    expose:
+      - 443
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+      - redis
+
+  ##
+  ## - mariadb
+  ##
+  mariadb:
+    image: mariadb:latest
+    pull_policy: always
+    container_name: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_USER=admin
+      - MARIADB_PASSWORD=admin
+      - MARIADB_DATABASE=nextcloud
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./mariadb:/data
+    expose:
+      - 3306
+    restart: unless-stopped
+
+  ##
+  ## - redis
+  ##
+  redis:
+    image: redis:latest
+    pull_policy: always
+    container_name: redis
+    volumes:
+      - redis_data:/data
+    expose:
+      - 6379
+    restart: unless-stopped
+    entrypoint: ["redis-server", "--maxmemory 4096mb", "--maxmemory-policy allkeys-lru", "--appendonly yes"]
